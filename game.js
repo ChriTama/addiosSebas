@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let score = 0;
     let highScore = localStorage.getItem('highScore') || 0;
     let lives = 3;
-    let gameSpeed = isMobile ? 1.5 : 1; // Più veloce su mobile
+    let gameSpeed = isMobile ? 2 : 1; // Molto più veloce su mobile
     let gameInterval;
     let obstacleInterval;
     let scoreInterval;
@@ -120,8 +120,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         obstacles.push(obstacleData);
         
-        // Animazione dell'ostacolo (più veloce su mobile)
-        const baseDuration = isMobile ? 3.5 : 5; // Più veloce su mobile
+        // Animazione dell'ostacolo (molto più veloce su mobile)
+        const baseDuration = isMobile ? 2.8 : 5; // Molto più veloce su mobile
         const animationDuration = baseDuration / gameSpeed;
         obstacle.style.animation = `moveObstacle ${animationDuration}s linear`;
         
@@ -268,12 +268,12 @@ document.addEventListener('DOMContentLoaded', () => {
         function generateObstacle() {
             if (!isGameOver) {
                 createObstacle();
-                // Intervallo tra gli ostacoli (più breve su mobile)
-                const minTime = isMobile ? 1000 : 1500; // 1-2s su mobile, 1.5-3s su desktop
-                const maxTime = isMobile ? 2000 : 3000;
+                // Intervallo tra gli ostacoli (molto più breve su mobile)
+                const minTime = isMobile ? 800 : 1500; // 0.8-1.8s su mobile, 1.5-3s su desktop
+                const maxTime = isMobile ? 1800 : 3000;
                 const randomTime = Math.random() * (maxTime - minTime) + minTime;
                 // Riduci l'effetto della velocità
-                const speedFactor = isMobile ? 0.8 : 0.7;
+                const speedFactor = isMobile ? 0.9 : 0.7;
                 obstacleInterval = setTimeout(generateObstacle, randomTime / (gameSpeed * speedFactor));
             }
         }
