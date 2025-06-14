@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
     // Variabili di gioco
-    let isJumping = false;
     let isGameOver = false;
     let score = 0;
     let highScore = localStorage.getItem('highScore') || 0;
@@ -60,42 +59,56 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // Gestisci il salto
-    let isHoldingJump = false;
+    // Gestisci il salto a tocco
+    let lastJumpTime = 0;
+    let isJumping = false;
+    let jumpHeight = 0;
+    const JUMP_HEIGHT = 100; // Altezza massima del salto
+    const JUMP_DURATION = 300; // Durata del salto in ms
     let jumpAnimation;
     
     function jump() {
         if (isGameOver) return;
         
+        const now = Date.now();
+        const timeSinceLastJump = now - lastJumpTime;
+        lastJumpTime = now;
+        
+        // Se il salto è avvenuto entro 200ms dal precedente, aumenta l'altezza
+        const isQuickTap = timeSinceLastJump < 200;
+        
+        // Se non stava già saltando, inizia un nuovo salto
         if (!isJumping) {
             isJumping = true;
             character.classList.add('jump');
+            jumpHeight = JUMP_HEIGHT;
+        } else if (isQuickTap) {
+            // Se è un tocco rapido, aumenta l'altezza (fino a un massimo di 1.5x)
+            jumpHeight = Math.min(JUMP_HEIGHT * 1.5, jumpHeight + 40);
         }
-        isHoldingJump = true;
         
-        // Mantieni il personaggio in alto
+        // Calcola la durata in base all'altezza
+        const duration = (jumpHeight / JUMP_HEIGHT) * JUMP_DURATION;
+        
+        // Applica l'animazione
         clearTimeout(jumpAnimation);
-        character.style.transition = 'transform 0.25s ease-out';
-        character.style.transform = 'translateY(-100px)';
-    }
-    
-    function stopJump() {
-        if (!isHoldingJump || !isJumping) return;
+        character.style.transition = `transform ${duration}ms ease-out`;
+        character.style.transform = `translateY(-${jumpHeight}px)`;
         
-        isHoldingJump = false;
-        
-        // Fai scendere il personaggio
-        character.style.transition = 'transform 0.3s ease-in';
-        character.style.transform = 'translateY(0)';
-        
-        // Ripristina lo stato dopo la discesa
+        // Pianifica la discesa
         jumpAnimation = setTimeout(() => {
-            if (!isHoldingJump) {
-                isJumping = false;
-                character.classList.remove('jump');
-                character.style.transition = 'transform 0.1s';
+            if (isJumping) {
+                character.style.transition = `transform ${duration * 0.8}ms ease-in`;
+                character.style.transform = 'translateY(0)';
+                
+                // Ripristina lo stato dopo la discesa
+                setTimeout(() => {
+                    isJumping = false;
+                    character.classList.remove('jump');
+                    character.style.transition = 'transform 0.1s';
+                }, duration * 0.8);
             }
-        }, 300);
+        }, 100); // Piccolo ritardo prima di iniziare a scendere
     }
     
     // Crea un nuovo ostacolo
@@ -320,14 +333,6 @@ document.addEventListener('DOMContentLoaded', () => {
         jump();
     });
     
-    // Rilascia il salto quando si rilascia il pulsante
-    jumpButton.addEventListener('mouseup', stopJump);
-    jumpButton.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        stopJump();
-    });
-    jumpButton.addEventListener('mouseleave', stopJump);
-    
     // Aggiungi anche i controlli da tastiera per comodità
     document.addEventListener('keydown', (e) => {
         if ((e.code === 'Space' || e.code === 'ArrowUp') && !isGameOver) {
@@ -336,12 +341,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    document.addEventListener('keyup', (e) => {
-        if (e.code === 'Space' || e.code === 'ArrowUp') {
-            e.preventDefault();
-            stopJump();
-        }
-    });
+    // Abilita il tap su tutto lo schermo su mobile
+    if (isMobile) {
+        document.addEventListener('touchstart', (e) => {
+            if (!isGameOver && e.target.id !== 'start-btn' && e.target.id !== 'restart-btn') {
+                e.preventDefault();
+                jump();
+            }
+        });
+    }
     
     // Controllo da tastiera
     document.addEventListener('keydown', (e) => {
