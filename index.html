@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Salta lo Sposo!</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Schermata iniziale -->
+    <div id="start-screen" class="screen">
+        <h1>Salta lo Sposo!</h1>
+        <div class="instructions">
+            <h2>Come giocare:</h2>
+            <ul>
+                <li>Premi <strong>SALTA</strong> per saltare gli ostacoli</li>
+                <li>Evita gli ostacoli rossi</li>
+                <li>Raccogli la sposa per 10 punti bonus!</li>
+                <li>Più a lungo sopravvivi, più diventa difficile</li>
+            </ul>
+            <div class="obstacle-preview">
+                <div class="obstacle-item">
+                    <div class="obstacle-img" id="obstacle1-preview"></div>
+                    <span>Ostacolo -1 vita</span>
+                </div>
+                <div class="obstacle-item">
+                    <div class="obstacle-img" id="bride-preview">👰</div>
+                    <span>Sposa +10 punti</span>
+                </div>
+            </div>
+            <button id="start-btn">AVVIA GIOCO</button>
+        </div>
+    </div>
+
+    <!-- Schermata di gioco -->
+    <div id="game-screen" class="screen hidden">
+        <div class="game-container">
+            <div id="game">
+                <div id="character"><img src="images/character.png" alt="Sposo" id="character-img"></div>
+                <div id="obstacles-container"></div>
+                <div id="ground"></div>
+            </div>
+            <div class="controls">
+                <div id="lives">
+                    <span>Vite: </span>
+                    <span id="hearts">❤️❤️❤️</span>
+                </div>
+                <button id="jump">SALTA</button>
+                <div id="score">Punteggio: <span>0</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schermata game over -->
+    <div id="game-over" class="screen hidden">
+        <h1>Game Over!</h1>
+        <div class="final-score">Punteggio finale: <span id="final-score">0</span></div>
+        <div class="high-score">Record: <span id="high-score">0</span></div>
+        <button id="restart-btn">RIGIOCA</button>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

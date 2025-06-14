@@ -1,0 +1,292 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    touch-action: manipulation;
+}
+
+/* Stile per tutte le schermate */
+.screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
+    text-align: center;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Schermata iniziale */
+#start-screen h1 {
+    color: #2d3436;
+    margin-bottom: 30px;
+    font-size: 2.5em;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.instructions {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    max-width: 100%;
+}
+
+.instructions h2 {
+    color: #2d3436;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+}
+
+.instructions ul {
+    text-align: left;
+    margin: 15px 0 25px 20px;
+}
+
+.instructions li {
+    margin-bottom: 10px;
+    color: #2d3436;
+}
+
+.obstacle-preview {
+    display: flex;
+    justify-content: space-around;
+    margin: 25px 0;
+}
+
+.obstacle-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 10px;
+}
+
+.obstacle-img {
+    width: 50px;
+    height: 50px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    font-size: 24px;
+    border: 2px solid #dee2e6;
+}
+
+/* Pulsanti */
+button {
+    background-color: #00b894;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.1em;
+    border-radius: 50px;
+    cursor: pointer;
+    margin: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 0 #00a884;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+button:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #00a884;
+}
+
+#start-btn {
+    background-color: #0984e3;
+    box-shadow: 0 4px 0 #0767b1;
+    font-size: 1.3em;
+    padding: 15px 40px;
+    margin-top: 20px;
+}
+
+#start-btn:active {
+    box-shadow: 0 2px 0 #0767b1;
+}
+
+/* Schermata di gioco */
+.game-container {
+    width: 100%;
+    max-width: 500px;
+    height: 400px;
+    margin: 0 auto;
+    background-color: #fff;
+    overflow: hidden;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+#game {
+    width: 100%;
+    height: 80%;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(to bottom, #87CEEB, #E0F7FA);
+}
+
+#character {
+    width: 70px;
+    height: 90px;
+    position: absolute;
+    bottom: 60px;
+    left: 50px;
+    transition: transform 0.1s;
+    z-index: 10;
+}
+
+#character img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.obstacle {
+    position: absolute;
+    bottom: 60px;
+    right: -50px;
+    animation: moveObstacle 4s linear infinite;
+    z-index: 5;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.obstacle img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+#ground {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 60px;
+    background-color: #4a7c59;
+    z-index: 2;
+}
+
+.controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+}
+
+#lives {
+    font-size: 1.2em;
+    color: #2d3436;
+}
+
+#hearts {
+    color: #ff6b6b;
+}
+
+#score {
+    font-size: 1.2em;
+    color: #2d3436;
+    font-weight: bold;
+}
+
+#jump {
+    padding: 10px 25px;
+    font-size: 1em;
+    background-color: #ff9f1c;
+    box-shadow: 0 4px 0 #d17a0f;
+}
+
+#jump:active {
+    box-shadow: 0 2px 0 #d17a0f;
+}
+
+/* Animazioni */
+@keyframes moveObstacle {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(calc(-100vw - 50px)); }
+}
+
+.jump {
+    animation: jump 0.6s ease-out;
+}
+
+@keyframes jump {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-120px); }
+    100% { transform: translateY(0); }
+}
+
+/* Schermata Game Over */
+#game-over h1 {
+    color: #e74c3c;
+    font-size: 3em;
+    margin-bottom: 20px;
+}
+
+.final-score {
+    font-size: 1.5em;
+    margin: 15px 0;
+    color: #2d3436;
+}
+
+.high-score {
+    font-size: 1.2em;
+    margin-bottom: 30px;
+    color: #2d3436;
+}
+
+#restart-btn {
+    background-color: #e74c3c;
+    box-shadow: 0 4px 0 #c0392b;
+    font-size: 1.2em;
+    padding: 15px 40px;
+}
+
+#restart-btn:active {
+    box-shadow: 0 2px 0 #c0392b;
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+    .game-container {
+        height: 350px;
+    }
+    
+    #character {
+        left: 30px;
+        width: 40px;
+        height: 60px;
+    }
+    
+    .obstacle {
+        width: 35px;
+        height: 35px;
+    }
+    
+    #jump {
+        padding: 8px 20px;
+        font-size: 0.9em;
+    }
+}
