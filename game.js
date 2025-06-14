@@ -60,18 +60,43 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // Funzione per far saltare il personaggio
+    // Gestisci il salto
+    let jumpTimeout;
+    let isHoldingJump = false;
+    
     function jump() {
         if (isJumping || isGameOver) return;
         
         isJumping = true;
+        isHoldingJump = true;
         character.classList.add('jump');
         
-        // Rimuovi la classe dopo il salto
-        setTimeout(() => {
+        // Imposta un timeout più lungo se si tiene premuto
+        clearTimeout(jumpTimeout);
+        jumpTimeout = setTimeout(() => {
+            if (isHoldingJump) {
+                // Salto prolungato
+                character.style.transition = 'transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1)';
+            } else {
+                stopJump();
+            }
+        }, 100); // Piccolo ritardo per il salto prolungato
+    }
+    
+    function stopJump() {
+        isHoldingJump = false;
+        clearTimeout(jumpTimeout);
+        
+        if (isJumping) {
+            character.style.transition = 'transform 0.4s cubic-bezier(0.5, 0, 0.75, 0.5)';
             character.classList.remove('jump');
-            isJumping = false;
-        }, 600);
+            
+            // Ripristina l'animazione dopo il salto
+            setTimeout(() => {
+                isJumping = false;
+                character.style.transition = 'transform 0.1s';
+            }, 400);
+        }
     }
     
     // Crea un nuovo ostacolo
@@ -288,7 +313,36 @@ document.addEventListener('DOMContentLoaded', () => {
     // Event Listeners
     startButton.addEventListener('click', startGame);
     restartButton.addEventListener('click', startGame);
-    jumpButton.addEventListener('click', jump);
+    
+    // Gestione del touch e del mouse
+    jumpButton.addEventListener('mousedown', jump);
+    jumpButton.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        jump();
+    });
+    
+    // Rilascia il salto quando si rilascia il pulsante
+    jumpButton.addEventListener('mouseup', stopJump);
+    jumpButton.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        stopJump();
+    });
+    jumpButton.addEventListener('mouseleave', stopJump);
+    
+    // Aggiungi anche i controlli da tastiera per comodità
+    document.addEventListener('keydown', (e) => {
+        if ((e.code === 'Space' || e.code === 'ArrowUp') && !isGameOver) {
+            e.preventDefault();
+            jump();
+        }
+    });
+    
+    document.addEventListener('keyup', (e) => {
+        if (e.code === 'Space' || e.code === 'ArrowUp') {
+            e.preventDefault();
+            stopJump();
+        }
+    });
     
     // Controllo da tastiera
     document.addEventListener('keydown', (e) => {
