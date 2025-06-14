@@ -13,13 +13,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const highScoreElement = document.getElementById('high-score');
     const heartsElement = document.getElementById('hearts');
     
+    // Rileva se è un dispositivo mobile
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
     // Variabili di gioco
     let isJumping = false;
     let isGameOver = false;
     let score = 0;
     let highScore = localStorage.getItem('highScore') || 0;
     let lives = 3;
-    let gameSpeed = 1;
+    let gameSpeed = isMobile ? 1.5 : 1; // Più veloce su mobile
     let gameInterval;
     let obstacleInterval;
     let scoreInterval;
@@ -117,8 +120,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         obstacles.push(obstacleData);
         
-        // Animazione dell'ostacolo (più lenta)
-        const baseDuration = 5; // 5 secondi per attraversare lo schermo alla velocità base
+        // Animazione dell'ostacolo (più veloce su mobile)
+        const baseDuration = isMobile ? 3.5 : 5; // Più veloce su mobile
         const animationDuration = baseDuration / gameSpeed;
         obstacle.style.animation = `moveObstacle ${animationDuration}s linear`;
         
@@ -265,12 +268,13 @@ document.addEventListener('DOMContentLoaded', () => {
         function generateObstacle() {
             if (!isGameOver) {
                 createObstacle();
-                // Aumenta l'intervallo tra gli ostacoli (tra 1.5 e 3 secondi)
-                const minTime = 1500; // 1.5 secondi
-                const maxTime = 3000; // 3 secondi
+                // Intervallo tra gli ostacoli (più breve su mobile)
+                const minTime = isMobile ? 1000 : 1500; // 1-2s su mobile, 1.5-3s su desktop
+                const maxTime = isMobile ? 2000 : 3000;
                 const randomTime = Math.random() * (maxTime - minTime) + minTime;
                 // Riduci l'effetto della velocità
-                obstacleInterval = setTimeout(generateObstacle, randomTime / (gameSpeed * 0.7));
+                const speedFactor = isMobile ? 0.8 : 0.7;
+                obstacleInterval = setTimeout(generateObstacle, randomTime / (gameSpeed * speedFactor));
             }
         }
         
