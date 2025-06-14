@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
         obstacles.push(obstacleData);
         
         // Animazione dell'ostacolo (più lenta)
-        const baseDuration = 4; // Aumentato da 2 a 4 secondi per la velocità base
+        const baseDuration = 5; // 5 secondi per attraversare lo schermo alla velocità base
         const animationDuration = baseDuration / gameSpeed;
         obstacle.style.animation = `moveObstacle ${animationDuration}s linear`;
         
@@ -205,8 +205,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Aumenta la difficoltà in base al punteggio
     function updateDifficulty() {
-        // Aumenta la velocità più lentamente
-        gameSpeed = 1 + Math.floor(score / 15) * 0.15;
+        // Aumenta la velocità molto più lentamente
+        gameSpeed = 1 + Math.floor(score / 20) * 0.1;
+        // Velocità massima limitata a 2x invece di 3x
+        gameSpeed = Math.min(gameSpeed, 2);
     }
     
     // Gestisci la fine del gioco
@@ -263,10 +265,12 @@ document.addEventListener('DOMContentLoaded', () => {
         function generateObstacle() {
             if (!isGameOver) {
                 createObstacle();
-                // Genera ostacoli più frequentemente (tra 0.5 e 1.5 secondi)
-                const randomTime = Math.random() * 1000 + 500;
-                // Riduci l'effetto della velocità sull'intervallo per mantenere più oggetti in scena
-                obstacleInterval = setTimeout(generateObstacle, randomTime / Math.sqrt(gameSpeed));
+                // Aumenta l'intervallo tra gli ostacoli (tra 1.5 e 3 secondi)
+                const minTime = 1500; // 1.5 secondi
+                const maxTime = 3000; // 3 secondi
+                const randomTime = Math.random() * (maxTime - minTime) + minTime;
+                // Riduci l'effetto della velocità
+                obstacleInterval = setTimeout(generateObstacle, randomTime / (gameSpeed * 0.7));
             }
         }
         
