@@ -61,42 +61,41 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // Gestisci il salto
-    let jumpTimeout;
     let isHoldingJump = false;
+    let jumpAnimation;
     
     function jump() {
-        if (isJumping || isGameOver) return;
+        if (isGameOver) return;
         
-        isJumping = true;
+        if (!isJumping) {
+            isJumping = true;
+            character.classList.add('jump');
+        }
         isHoldingJump = true;
-        character.classList.add('jump');
         
-        // Imposta un timeout più lungo se si tiene premuto
-        clearTimeout(jumpTimeout);
-        jumpTimeout = setTimeout(() => {
-            if (isHoldingJump) {
-                // Salto prolungato
-                character.style.transition = 'transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1)';
-            } else {
-                stopJump();
-            }
-        }, 100); // Piccolo ritardo per il salto prolungato
+        // Mantieni il personaggio in alto
+        clearTimeout(jumpAnimation);
+        character.style.transition = 'transform 0.25s ease-out';
+        character.style.transform = 'translateY(-100px)';
     }
     
     function stopJump() {
-        isHoldingJump = false;
-        clearTimeout(jumpTimeout);
+        if (!isHoldingJump || !isJumping) return;
         
-        if (isJumping) {
-            character.style.transition = 'transform 0.4s cubic-bezier(0.5, 0, 0.75, 0.5)';
-            character.classList.remove('jump');
-            
-            // Ripristina l'animazione dopo il salto
-            setTimeout(() => {
+        isHoldingJump = false;
+        
+        // Fai scendere il personaggio
+        character.style.transition = 'transform 0.3s ease-in';
+        character.style.transform = 'translateY(0)';
+        
+        // Ripristina lo stato dopo la discesa
+        jumpAnimation = setTimeout(() => {
+            if (!isHoldingJump) {
                 isJumping = false;
+                character.classList.remove('jump');
                 character.style.transition = 'transform 0.1s';
-            }, 400);
-        }
+            }
+        }, 300);
     }
     
     // Crea un nuovo ostacolo
