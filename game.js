@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const obstacleTypes = [
             { type: 'obstacle', image: images.obstacle1, points: 0, width: 35, height: 35 },
             { type: 'obstacle', image: images.obstacle2, points: 0, width: 35, height: 45 },
-            { type: 'bride', image: images.bride, points: 10, width: 30, height: 50 }
+            { type: 'bride', image: images.bride, points: 10, width: 45, height: 75 }
         ];
         
         // 25% di probabilità di generare una sposa (bonus)
@@ -202,11 +202,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     obstacles = obstacles.filter(o => o !== obstacle);
                 }
             } else if (!obstacle.passed && obstacleRect.right < characterRect.left) {
-                // Punto per aver superato l'ostacolo
+                // Punti per aver superato l'ostacolo
                 obstacle.passed = true;
                 if (obstacle.type === 'obstacle') {
-                    score++;
-                    updateScore();
+                    score += 5; // 5 punti per ogni ostacolo evitato
+                    scoreElement.textContent = score; // Aggiorna subito il punteggio
                 }
             }
         });

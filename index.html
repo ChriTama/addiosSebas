@@ -9,23 +9,31 @@
 <body>
     <!-- Schermata iniziale -->
     <div id="start-screen" class="screen">
-        <h1>Salta lo Sposo!</h1>
+        <h1>Addios de celibados Sebas!</h1>
+        <div class="character-preview">
+            <div class="character-item">
+                <img src="images/character.png" alt="Personaggio" onerror="this.style.display='none'; this.parentNode.textContent='👨';">
+                <p>Tu</p>
+            </div>
+        </div>
         <div class="instructions">
             <h2>Come giocare:</h2>
             <ul>
                 <li>Premi <strong>SALTA</strong> per saltare</li>
-                <li>Evita i rossi</li>
-                <li>Prendi la sposa per 10 punti</li>
                 <li>3 vite a disposizione</li>
             </ul>
-            <div class="obstacle-preview">
-                <div class="obstacle-item">
-                    <div class="obstacle-img" id="obstacle1-preview"></div>
-                    <span>Ostacolo -1 vita</span>
+            <div class="obstacles-preview">
+                <div class="obstacle-preview">
+                    <img src="images/obstacle1.png" alt="Ostacolo 1" onerror="this.style.display='none'; this.parentNode.textContent='🚫';">
+                    <p>+5 punti se eviti</p>
                 </div>
-                <div class="obstacle-item">
-                    <div class="obstacle-img" id="bride-preview">👰</div>
-                    <span>Sposa +10 punti</span>
+                <div class="obstacle-preview">
+                    <img src="images/obstacle2.png" alt="Ostacolo 2" onerror="this.style.display='none'; this.parentNode.textContent='🚫';">
+                    <p>+5 punti se eviti</p>
+                </div>
+                <div class="obstacle-preview">
+                    <img src="images/bride.png" alt="Sposa" onerror="this.style.display='none'; this.parentNode.textContent='👰';">
+                    <p>+10 punti se la prendi</p>
                 </div>
             </div>
             <button id="start-btn">AVVIA GIOCO</button>

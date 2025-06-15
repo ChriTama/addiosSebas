@@ -65,30 +65,70 @@ body {
     color: #2d3436;
 }
 
-.obstacle-preview {
+.character-preview {
     display: flex;
-    justify-content: space-around;
-    margin: 25px 0;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    margin: 20px 0;
+    padding: 20px 0;
 }
 
-.obstacle-item {
+.character-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 0 10px;
+    text-align: center;
 }
 
-.obstacle-img {
-    width: 50px;
-    height: 50px;
-    background-color: #f8f9fa;
-    border-radius: 10px;
+.character-item img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: 10px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.character-item p {
+    margin: 5px 0 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+}
+
+.obstacles-preview {
     display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.obstacle-preview {
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    margin-bottom: 8px;
-    font-size: 24px;
-    border: 2px solid #dee2e6;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 10px;
+    min-width: 100px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.obstacle-preview img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+
+.obstacle-preview p {
+    margin: 5px 0 0;
+    font-size: 14px;
+    text-align: center;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
 }
 
 /* Pulsanti */
