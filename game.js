@@ -59,56 +59,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // Gestisci il salto a tocco
-    let lastJumpTime = 0;
+    // Gestisci il salto
     let isJumping = false;
-    let jumpHeight = 0;
-    const JUMP_HEIGHT = 100; // Altezza massima del salto
-    const JUMP_DURATION = 300; // Durata del salto in ms
-    let jumpAnimation;
+    const JUMP_HEIGHT = 80; // Altezza del salto
+    const JUMP_DURATION = 400; // Durata del salto in ms
     
     function jump() {
-        if (isGameOver) return;
+        if (isJumping || isGameOver) return;
         
-        const now = Date.now();
-        const timeSinceLastJump = now - lastJumpTime;
-        lastJumpTime = now;
+        isJumping = true;
+        character.classList.add('jump');
         
-        // Se il salto è avvenuto entro 200ms dal precedente, aumenta l'altezza
-        const isQuickTap = timeSinceLastJump < 200;
+        // Salita
+        character.style.transition = `transform ${JUMP_DURATION}ms ease-out`;
+        character.style.transform = `translateY(-${JUMP_HEIGHT}px)`;
         
-        // Se non stava già saltando, inizia un nuovo salto
-        if (!isJumping) {
-            isJumping = true;
-            character.classList.add('jump');
-            jumpHeight = JUMP_HEIGHT;
-        } else if (isQuickTap) {
-            // Se è un tocco rapido, aumenta l'altezza (fino a un massimo di 1.5x)
-            jumpHeight = Math.min(JUMP_HEIGHT * 1.5, jumpHeight + 40);
-        }
-        
-        // Calcola la durata in base all'altezza
-        const duration = (jumpHeight / JUMP_HEIGHT) * JUMP_DURATION;
-        
-        // Applica l'animazione
-        clearTimeout(jumpAnimation);
-        character.style.transition = `transform ${duration}ms ease-out`;
-        character.style.transform = `translateY(-${jumpHeight}px)`;
-        
-        // Pianifica la discesa
-        jumpAnimation = setTimeout(() => {
-            if (isJumping) {
-                character.style.transition = `transform ${duration * 0.8}ms ease-in`;
-                character.style.transform = 'translateY(0)';
-                
-                // Ripristina lo stato dopo la discesa
-                setTimeout(() => {
-                    isJumping = false;
-                    character.classList.remove('jump');
-                    character.style.transition = 'transform 0.1s';
-                }, duration * 0.8);
-            }
-        }, 100); // Piccolo ritardo prima di iniziare a scendere
+        // Discesa
+        setTimeout(() => {
+            character.style.transition = `transform ${JUMP_DURATION * 0.8}ms ease-in`;
+            character.style.transform = 'translateY(0)';
+            
+            // Ripristina lo stato dopo la discesa
+            setTimeout(() => {
+                isJumping = false;
+                character.classList.remove('jump');
+                character.style.transition = 'transform 0.1s';
+            }, JUMP_DURATION * 0.8);
+        }, JUMP_DURATION * 0.4); // Inizia a scendere prima di raggiungere l'apice
     }
     
     // Crea un nuovo ostacolo
@@ -116,9 +93,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isGameOver) return;
         
         const obstacleTypes = [
-            { type: 'obstacle', image: images.obstacle1, points: 0, width: 50, height: 50 },
-            { type: 'obstacle', image: images.obstacle2, points: 0, width: 50, height: 60 },
-            { type: 'bride', image: images.bride, points: 10, width: 45, height: 65 }
+            { type: 'obstacle', image: images.obstacle1, points: 0, width: 35, height: 35 },
+            { type: 'obstacle', image: images.obstacle2, points: 0, width: 35, height: 45 },
+            { type: 'bride', image: images.bride, points: 10, width: 30, height: 50 }
         ];
         
         // 25% di probabilità di generare una sposa (bonus)
@@ -171,22 +148,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }, animationDuration * 1000);
     }
     
-    // Controlla le collisioni
+    // Controlla le collisioni con margine ridotto
     function checkCollisions() {
         if (isGameOver) return;
         
         const characterRect = character.getBoundingClientRect();
+        const margin = 5; // Riduci il margine di collisione
         
         obstacles.forEach(obstacle => {
             const obstacleRect = obstacle.element.getBoundingClientRect();
             
-            // Controlla se c'è una collisione
-            if (!obstacle.passed && 
-                characterRect.right > obstacleRect.left + 10 && 
-                characterRect.left < obstacleRect.right - 10 &&
-                characterRect.bottom > obstacleRect.top + 10 &&
-                characterRect.top < obstacleRect.bottom - 10) {
-                
+            // Controlla se c'è una collisione con margine ridotto
+            if (
+                characterRect.right > obstacleRect.left + margin &&
+                characterRect.left < obstacleRect.right - margin &&
+                characterRect.bottom > obstacleRect.top + margin &&
+                characterRect.top < obstacleRect.bottom - margin
+            ) {
                 if (obstacle.type === 'bride') {
                     // Raccogli la sposa (bonus punti)
                     score += obstacle.points;
@@ -202,37 +180,33 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     // Aggiorna l'array degli ostacoli
                     obstacles = obstacles.filter(o => o !== obstacle);
-                    return;
                 } else {
-                    // Colpito un ostacolo
+                    // Colpito un ostacolo normale
                     lives--;
                     updateLives();
                     
                     if (lives <= 0) {
                         gameOver();
                     } else {
-                        // Lampeggia il personaggio quando viene colpito
-                        character.style.opacity = '0.5';
+                        // Effetto di danno visivo
+                        document.body.style.backgroundColor = '#ffebee';
                         setTimeout(() => {
-                            character.style.opacity = '1';
-                        }, 300);
+                            document.body.style.backgroundColor = '';
+                        }, 200);
                     }
                     
-                    // Rimuovi l'ostacolo che ha colpito
-                    obstacle.element.style.animation = 'none';
+                    // Rimuovi l'ostacolo
                     if (obstacle.element.parentNode === obstaclesContainer) {
                         obstaclesContainer.removeChild(obstacle.element);
                     }
                     obstacles = obstacles.filter(o => o !== obstacle);
                 }
-            }
-            
-            // Controlla se l'ostacolo è stato superato (per il punteggio)
-            if (!obstacle.passed && obstacleRect.right < characterRect.left) {
+            } else if (!obstacle.passed && obstacleRect.right < characterRect.left) {
+                // Punto per aver superato l'ostacolo
                 obstacle.passed = true;
                 if (obstacle.type === 'obstacle') {
                     score++;
-                    scoreElement.textContent = score;
+                    updateScore();
                 }
             }
         });
