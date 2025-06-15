@@ -16,50 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Rileva se è un dispositivo mobile
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-    // Audio
-    let audioContext;
-    let audioEnabled = false;
-    
-    function initAudio() {
-        if (!audioContext) {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        audioEnabled = true;
-        document.getElementById('enable-audio').classList.add('enabled');
-        document.getElementById('enable-audio').textContent = '🔊 AUDIO ATTIVO';
-        document.getElementById('start-btn').classList.remove('hidden');
-        
-        // Riproduci un suono di conferma
-        playSound(523.25, 'sine', 0.2);
-    }
-    
-    function playSound(frequency, type, duration = 0.2) {
-        if (!audioEnabled) return;
-        
-        try {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            
-            oscillator.type = type;
-            oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
-            
-            gainNode.gain.setValueAtTime(1, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            oscillator.start();
-            oscillator.stop(audioContext.currentTime + duration);
-        } catch (e) {
-            console.error('Errore nella riproduzione audio:', e);
-        }
-    }
-    
     // Variabili di gioco
     let isGameOver = false;
     let score = 0;
@@ -210,9 +166,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 characterRect.top < obstacleRect.bottom - margin
             ) {
                 if (obstacle.type === 'bride') {
-                    // Suono di raccolta sposa
-                    playSound(1000, 'sine', 0.3);
-                    
                     // Raccogli la sposa (bonus punti)
                     score += obstacle.points;
                     scoreElement.textContent = score;
@@ -228,9 +181,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Aggiorna l'array degli ostacoli
                     obstacles = obstacles.filter(o => o !== obstacle);
                 } else {
-                    // Suono di collisione con ostacolo
-                    playSound(150, 'sine', 0.3);
-                    
                     // Colpito un ostacolo normale
                     lives--;
                     updateLives();
@@ -255,9 +205,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Punti per aver superato l'ostacolo
                 obstacle.passed = true;
                 if (obstacle.type === 'obstacle') {
-                    // Suono di successo per ostacolo evitato
-                    playSound(800, 'sine', 0.1);
-                    
                     score += 5; // 5 punti per ogni ostacolo evitato
                     scoreElement.textContent = score; // Aggiorna subito il punteggio
                 }
@@ -344,25 +291,16 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Avvia la generazione del primo ostacolo
         generateObstacle();
+        
+        // Aggiorna la difficoltà ogni secondo
+        scoreInterval = setInterval(updateDifficulty, 1000);
     }
     
-    // Event listeners
-    document.getElementById('enable-audio').addEventListener('click', function() {
-        // Su iOS è necessario riprodurre un suono al primo tocco
-        const initAudioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = initAudioContext.createOscillator();
-        oscillator.connect(initAudioContext.destination);
-        oscillator.start();
-        oscillator.stop(initAudioContext.currentTime + 0.1);
-        
-        // Inizializza l'audio dopo l'interazione
-        initAudio();
-    });
+    // Event Listeners
+    startButton.addEventListener('click', startGame);
+    restartButton.addEventListener('click', startGame);
     
-    document.getElementById('start-btn').addEventListener('click', startGame);
-    document.getElementById('restart-btn').addEventListener('click', startGame);
-    
-    // Gestione del salto
+    // Gestione del touch e del mouse
     jumpButton.addEventListener('mousedown', jump);
     jumpButton.addEventListener('touchstart', (e) => {
         e.preventDefault();
