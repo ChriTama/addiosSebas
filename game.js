@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Gestisci il salto
     let isJumping = false;
     const JUMP_HEIGHT = 80; // Altezza del salto
-    const JUMP_DURATION = 400; // Durata del salto in ms
+    const JUMP_DURATION = 600; // Durata del salto in ms
     
     function jump() {
         if (isJumping || isGameOver) return;
