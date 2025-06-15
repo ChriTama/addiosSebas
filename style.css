@@ -4,6 +4,12 @@
     box-sizing: border-box;
 }
 
+html, body {
+    height: 100%;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
 body {
     font-family: 'Arial', sans-serif;
     background-color: #f0f0f0;
@@ -21,11 +27,12 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     width: 100%;
     max-width: 500px;
     padding: 20px;
     text-align: center;
+    min-height: 100%;
+    box-sizing: border-box;
 }
 
 .hidden {
@@ -33,6 +40,10 @@ body {
 }
 
 /* Schermata iniziale */
+#start-screen {
+    padding: 30px 20px 100px; /* Più spazio in basso per il pulsante */
+}
+
 #start-screen h1 {
     color: #2d3436;
     margin-bottom: 30px;
@@ -45,8 +56,10 @@ body {
     padding: 25px;
     border-radius: 15px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
+    margin: 20px 0;
     max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .instructions h2 {
@@ -140,11 +153,13 @@ button {
     font-size: 1.1em;
     border-radius: 50px;
     cursor: pointer;
-    margin: 10px;
+    margin: 20px 0;
     transition: all 0.3s ease;
     box-shadow: 0 4px 0 #00a884;
     outline: none;
     -webkit-tap-highlight-color: transparent;
+    width: 100%;
+    max-width: 300px;
 }
 
 button:active {
@@ -309,6 +324,33 @@ button:active {
 }
 
 /* Responsive */
+@media (max-width: 768px) {
+    #start-screen {
+        padding: 20px 15px 100px;
+    }
+    
+    .instructions {
+        padding: 20px 15px;
+    }
+    
+    button {
+        margin: 15px 0;
+    }
+    
+    .obstacles-preview {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding-bottom: 10px;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .obstacle-preview {
+        flex: 0 0 auto;
+        min-width: 120px;
+    }
+}
+
 @media (max-width: 500px) {
     .game-container {
         height: 350px;
