@@ -16,6 +16,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // Rileva se è un dispositivo mobile
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
+    // Audio
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function playSound(frequency, type, duration = 0.2) {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.type = type;
+        oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+        
+        gainNode.gain.setValueAtTime(1, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.start();
+        oscillator.stop(audioContext.currentTime + duration);
+    }
+    
     // Variabili di gioco
     let isGameOver = false;
     let score = 0;
@@ -166,6 +186,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 characterRect.top < obstacleRect.bottom - margin
             ) {
                 if (obstacle.type === 'bride') {
+                    // Suono di raccolta sposa
+                    playSound(1000, 'sine', 0.3);
+                    
                     // Raccogli la sposa (bonus punti)
                     score += obstacle.points;
                     scoreElement.textContent = score;
@@ -181,6 +204,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Aggiorna l'array degli ostacoli
                     obstacles = obstacles.filter(o => o !== obstacle);
                 } else {
+                    // Suono di collisione con ostacolo
+                    playSound(150, 'sine', 0.3);
+                    
                     // Colpito un ostacolo normale
                     lives--;
                     updateLives();
@@ -205,6 +231,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Punti per aver superato l'ostacolo
                 obstacle.passed = true;
                 if (obstacle.type === 'obstacle') {
+                    // Suono di successo per ostacolo evitato
+                    playSound(800, 'sine', 0.1);
+                    
                     score += 5; // 5 punti per ogni ostacolo evitato
                     scoreElement.textContent = score; // Aggiorna subito il punteggio
                 }
