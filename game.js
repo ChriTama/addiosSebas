@@ -17,23 +17,47 @@ document.addEventListener('DOMContentLoaded', () => {
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
     // Audio
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    let audioContext;
+    let audioEnabled = false;
+    
+    function initAudio() {
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        audioEnabled = true;
+        document.getElementById('enable-audio').classList.add('enabled');
+        document.getElementById('enable-audio').textContent = '🔊 AUDIO ATTIVO';
+        document.getElementById('start-btn').classList.remove('hidden');
+        
+        // Riproduci un suono di conferma
+        playSound(523.25, 'sine', 0.2);
+    }
     
     function playSound(frequency, type, duration = 0.2) {
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
+        if (!audioEnabled) return;
         
-        oscillator.type = type;
-        oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
-        
-        gainNode.gain.setValueAtTime(1, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
-        oscillator.start();
-        oscillator.stop(audioContext.currentTime + duration);
+        try {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.type = type;
+            oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+            
+            gainNode.gain.setValueAtTime(1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + duration);
+        } catch (e) {
+            console.error('Errore nella riproduzione audio:', e);
+        }
     }
     
     // Variabili di gioco
@@ -320,16 +344,25 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Avvia la generazione del primo ostacolo
         generateObstacle();
-        
-        // Aggiorna la difficoltà ogni secondo
-        scoreInterval = setInterval(updateDifficulty, 1000);
     }
     
-    // Event Listeners
-    startButton.addEventListener('click', startGame);
-    restartButton.addEventListener('click', startGame);
+    // Event listeners
+    document.getElementById('enable-audio').addEventListener('click', function() {
+        // Su iOS è necessario riprodurre un suono al primo tocco
+        const initAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = initAudioContext.createOscillator();
+        oscillator.connect(initAudioContext.destination);
+        oscillator.start();
+        oscillator.stop(initAudioContext.currentTime + 0.1);
+        
+        // Inizializza l'audio dopo l'interazione
+        initAudio();
+    });
     
-    // Gestione del touch e del mouse
+    document.getElementById('start-btn').addEventListener('click', startGame);
+    document.getElementById('restart-btn').addEventListener('click', startGame);
+    
+    // Gestione del salto
     jumpButton.addEventListener('mousedown', jump);
     jumpButton.addEventListener('touchstart', (e) => {
         e.preventDefault();
