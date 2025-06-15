@@ -104,8 +104,12 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const obstacle = document.createElement('div');
         obstacle.className = 'obstacle';
-        obstacle.style.width = `${obstacleType.width}px`;
-        obstacle.style.height = `${obstacleType.height}px`;
+        
+        // Dimensioni ridotte per facilitare il gioco
+        const width = 25 + Math.random() * 10; // Tra 25 e 35px
+        const height = 25 + Math.random() * 10; // Tra 25 e 35px
+        obstacle.style.width = `${width}px`;
+        obstacle.style.height = `${height}px`;
         obstacle.style.bottom = `${obstacleType.type === 'bride' ? '65px' : '60px'}`;
         
         const img = document.createElement('img');
